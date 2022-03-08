@@ -1,6 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function(req, file, cb){
+        cb(null, new Date().toISOString() + file.originalname)
+    }
+})
+
+const upload = multer({
+                        storage: storage,
+                        limits: {
+                            fileSize: 1024 * 1024 * 5
+                        }});
 
 //RETORNA TODOS OS PRODUTOS
 router.get('/', (req, res, next) => {
@@ -18,6 +34,7 @@ router.get('/', (req, res, next) => {
                             id_produto: prod.id_produto,
                             nome: prod.nome,
                             preco: prod.preco,
+                            imagem_produto: prod.imagem_produto,
                             request: {
                                 tipo: 'GET',
                                 descricao: '',
@@ -57,6 +74,7 @@ router.get('/:id_produto', (req, res, next) => {
                         id_produto: resultado[0].id_produto,
                         nome: resultado[0].nome,
                         preco: resultado[0].preco,
+                        imagem_produto: resultado[0].imagem_produto
                     },
                     request: {
                         tipo: 'GET',
@@ -71,13 +89,14 @@ router.get('/:id_produto', (req, res, next) => {
 });
 
 // SALVA UM PRODUTO
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('imagem_produto'), (req, res, next) => {
+    console.log(req.file);
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) }
 
         conn.query(
-            'INSERT INTO produtos (nome, preco) VALUES (?,?)',
-            [req.body.nome, req.body.preco],
+            'INSERT INTO produtos (nome, preco, imagem_produto) VALUES (?,?,?)',
+            [req.body.nome, req.body.preco, req.file.path],
             (error, resultado, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error }) }
@@ -88,6 +107,7 @@ router.post('/', (req, res, next) => {
                         id_produto: resultado.id_produto,
                         nome: req.body.nome,
                         preco: req.body.preco,
+                        imagem_produto: req.file.path
                     },
                     request: {
                         tipo: 'POST',
