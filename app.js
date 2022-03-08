@@ -1,10 +1,27 @@
 const express = require('express');
-const req = require('express/lib/request');
 const app = express();
+const morgan = require('morgan');
+
+const rotaProdutos = require('./routes/produtos');
+const rotaPedidos = require('./routes/pedidos');
+
+app.use(morgan('dev'))
+
+app.use('/produtos', rotaProdutos);
+app.use('/pedidos', rotaPedidos);
 
 app.use((req, res, next) => {
-    res.status(200).send({
-        mensagem: "Ok, Deu bom"
+    const erro = new Error('NÃO ENCONTRADO');
+    erro.status = 404;
+    next(erro);
+});
+
+app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    return res.send({
+        erro: {
+            mensagem: error.message
+        }
     });
 });
 
