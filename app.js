@@ -8,6 +8,12 @@ const rotaProdutos = require('./routes/produtos');
 const rotaPedidos = require('./routes/pedidos');
 const rotaUsuarios = require('./routes/usuarios');
 
+// PRESENTE
+const RotaProfessor = require('./routes/professor.routes');
+const RotaTurma = require('./routes/turma.routes');
+const RotaAula = require('./routes/aula.routes');
+
+
 app.use(morgan('dev'))
 app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({extended: false}))
@@ -32,6 +38,11 @@ app.use((req, res, next) => {
 app.use('/produtos', rotaProdutos);
 app.use('/pedidos', rotaPedidos);
 app.use('/usuarios', rotaUsuarios);
+
+//PRESENTE
+app.use('/professor', RotaProfessor);
+app.use('/turma', RotaTurma);
+app.use('/aula', RotaAula);
 
 app.use((req, res, next) => {
     const erro = new Error('NÃO ENCONTRADO');
