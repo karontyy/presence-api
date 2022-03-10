@@ -1,0 +1,1 @@
+{"version":"1.0.0","name":"api","dependencies":{"bcrypt":{"version":"5.0.1"},"body-parser":{"version":"1.19.2"},"express":{"version":"4.17.3"},"jsonwebtoken":{"version":"8.5.1"},"morgan":{"version":"1.10.0"},"multer":{"version":"1.4.4"},"mysql":{"version":"2.18.1"}}}
