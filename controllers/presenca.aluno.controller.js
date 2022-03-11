@@ -5,13 +5,20 @@ exports.buscaTodosOsPresentes = (req, res, next) => {
         if (error) { return res.status(500).send({ error: error }) }
 
         conn.query(
-            `SELECT *
+            `SELECT aluno.id_aluno, aluno.nome as aluno_nome, aluno.idade, aluno.esta_presente,
+            aula.id_aula, aula.data, aula.quantidade_presentes, aula.quantidade_biblias, aula.quantidade_revista,
+            turma.id_turma, turma.nome as turma_nome, turma.quantidade_alunos, 
+            professor.id_professor, professor.nome as professor_nome, professor.email, professor.telefone, professor.admin
             FROM aluno_has_aula
             INNER JOIN aluno
             ON aluno_has_aula.fk_aluno = aluno.id_aluno
             INNER JOIN aula
             ON aluno_has_aula.fk_aula = aula.id_aula
-            wHERE aula.data = \"${req.params.data}\";`,
+            INNER JOIN turma
+            ON aluno_has_aula.fk_turma = turma.id_turma
+            INNER JOIN professor
+            ON aluno_has_aula.fk_professor = professor.id_professor
+            wHERE aula.data = \"${req.params.data}\" AND turma.id_turma = ${req.params.id_turma};`,
             (error, resultado, fields) => {
                 if (error) { return res.status(500).send({ error: error }) }
                 const response = {
@@ -20,24 +27,28 @@ exports.buscaTodosOsPresentes = (req, res, next) => {
                         return {
                             aluno: {
                                 id_aluno: pres.id_aluno,
-                                nome: pres.nome,
+                                nome: pres.aluno_nome,
                                 idade: pres.idade ,
-                                presente: pres.presente
+                                presente: pres.esta_presente == 1 ? "true" : "false"
                             },
-                            // aula: {
-                            //     id_aula: pres.id_aula,
-                            //     data: pres.data,
-                            //     quantidade_presentes: pres.quantidade_presentes,
-                            //     quantidade_biblias: pres.quantidade_biblias,
-                            //     quantidade_revista: pres.quantidade_revista
-                            // },
-                            request: {
-                                tipo: 'GET',
-                                descricao: '',
-                                url: ''
+                            aula: {
+                                id_aula: pres.id_aula,
+                                data: pres.data,
+                                quantidade_presentes: pres.quantidade_presentes,
+                                quantidade_biblias: pres.quantidade_biblias,
+                                quantidade_revista: pres.quantidade_revista
                             }
                         }
-                    })
+                    }),
+                    turma: {
+                        id_turma: resultado[0].id_turma,
+                        nome: resultado[0].turma_nome,
+                        quantidade_alunos: resultado[0].quantidade_alunos
+                    },
+                    professor: {
+                        id_professor: resultado[0].id_professor,
+                        nome: resultado[0].professor_nome
+                    }
                 }
                 return res.status(200).send({
                     response: response
@@ -83,8 +94,8 @@ exports.salvarPresencaAluno = (req, res, next) => {
         if (error) { return res.status(500).send({ error: error }) }
 
         conn.query(
-            'INSERT INTO aluno_has_aula (fk_aluno, fk_aula) VALUES (?,?)',
-            [req.body.aluno, req.body.aula],
+            'INSERT INTO aluno_has_aula (fk_aluno, fk_aula, fk_turma, fk_professor) VALUES (?,?,?,?)',
+            [req.body.aluno, req.body.aula, req.body.turma, req.body.professor],
             (error, resultado, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error }) }
@@ -93,7 +104,9 @@ exports.salvarPresencaAluno = (req, res, next) => {
                     mensagem: 'presença inserida com sucesso', 
                     presenceCriado: {
                         aluno: req.body.aluno,
-                        aula: req.body.aula
+                        aula: req.body.aula,
+                        turma: req.body.turma,
+                        professor: req.body.professor
                     },
                     request: {
                         tipo: 'GET',

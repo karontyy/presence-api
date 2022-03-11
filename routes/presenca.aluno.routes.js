@@ -4,7 +4,7 @@ const login = require('../middleware/login')
 
 const PresencaController = require('../controllers/presenca.aluno.controller')
 
-router.get('/:data', PresencaController.buscaTodosOsPresentes);
+router.get('/:data/:id_turma', PresencaController.buscaTodosOsPresentes);
 // router.get('/:data', PresencaController.buscarAlunoPorId);
 router.post('/', PresencaController.salvarPresencaAluno);
 // router.patch('/:id_aluno', login.obrigatorio, PresencaController.alterarAluno);
