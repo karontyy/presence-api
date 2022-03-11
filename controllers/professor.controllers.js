@@ -78,7 +78,7 @@ exports.buscaDadosProfessor = (req, res, next) => {
 
         conn.query(
             `
-            SELECT professor.nome as prof_nome, professor.email, professor.telefone, professor.admin, turma.nome as turma_nome, turma.quantidade_alunos FROM professor INNER JOIN turma ON turma.id_turma = professor.turma_id_turma WHERE id_professor = ? ;
+            SELECT * FROM professor WHERE id_professor = ?
             `,
             [req.params.id_professor],
             (error, resultado, fields) => {
@@ -97,15 +97,7 @@ exports.buscaDadosProfessor = (req, res, next) => {
                             nome: prof.prof_nome,
                             email: prof.email,
                             telefone: prof.telefone,
-                            admin: prof.admin == 1 ? "true" : "false",
-                            turma: {
-                                id_turma: prof.id_turma,
-                                nome: prof.turma_nome,
-                                quantidade_alunos: prof.quantidade_alunos
-                            },
-                            aulas: {
-    
-                            }
+                            admin: prof.admin == 1 ? "true" : "false"
                         }
                     })
                 }
