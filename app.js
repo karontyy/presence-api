@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const RotaProfessor = require('./routes/professor.routes');
 const RotaTurma = require('./routes/turma.routes');
 const RotaAula = require('./routes/aula.routes');
-
+const RotaAluno = require('./routes/aluno.routes');
 
 app.use(morgan('dev'))
 app.use('/uploads', express.static('uploads'))
@@ -34,9 +34,10 @@ app.use((req, res, next) => {
 app.use('/professor', RotaProfessor);
 app.use('/turma', RotaTurma);
 app.use('/aula', RotaAula);
+app.use('/aluno', RotaAluno);
 
 app.use((req, res, next) => {
-    const erro = new Error('NÃO ENCONTRADO');
+    const erro = new Error('Endpoint não encontrado ;(');
     erro.status = 404;
     next(erro);
 });
