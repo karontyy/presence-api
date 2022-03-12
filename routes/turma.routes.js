@@ -22,8 +22,8 @@ const TurmaController = require('../controllers/turma.controller')
 //     }
 // });
 
-router.get('/', TurmaController.buscaTodasAsTurmas);
-router.get('/:id_turma', TurmaController.buscaTurmaPeloId);
+router.get('/',  login.obrigatorio, TurmaController.buscaTodasAsTurmas);
+router.get('/:id_turma', login.obrigatorio,TurmaController.buscaTurmaPeloId);
 router.post('/', login.obrigatorio, TurmaController.salvarTurma);
 router.patch('/:id_turma', login.obrigatorio, TurmaController.alterarTurma);
 router.delete('/:id_turma', login.obrigatorio, TurmaController.deletarTurma);
