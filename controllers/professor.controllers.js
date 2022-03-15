@@ -26,7 +26,7 @@ exports.cadastroDeUsuarios = (req, res, next) => {
                             if (error) { return res.status(500).send({ error: error })}
                                 response = {
                                     mensagem: 'Professor cadastrado com successo',
-                                    usuarioCriado: {
+                                    professorCriado: {
                                         id_usuario: results.insertId,
                                         nome: req.body.nome,
                                         email: req.body.email,
