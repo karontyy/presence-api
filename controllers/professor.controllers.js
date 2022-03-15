@@ -28,7 +28,10 @@ exports.cadastroDeUsuarios = (req, res, next) => {
                                     mensagem: 'Professor cadastrado com successo',
                                     usuarioCriado: {
                                         id_usuario: results.insertId,
-                                        email: req.body.email
+                                        nome: req.body.nome,
+                                        email: req.body.email,
+                                        telefone: req.body.telefone,
+                                        admin: req.body.admin == 1 ? "true" : "false"
                                     }
                                 }
                                 return res.status(201).send(response)
