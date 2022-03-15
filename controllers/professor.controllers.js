@@ -13,7 +13,7 @@ exports.cadastroDeUsuarios = (req, res, next) => {
                 bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
                     if (errBcrypt) { return res.status(500).send({error: errBcrypt})}
                     conn.query(
-                        `INSERT INTO professor (nome, email, senha, telefone, admin, turma_id_turma) VALUES (?,?,?,?,?,?)`, 
+                        `INSERT INTO professor (nome, email, senha, telefone, admin) VALUES (?,?,?,?,?)`, 
                         [   req.body.nome,
                             req.body.email, 
                             hash,
