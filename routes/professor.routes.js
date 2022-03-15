@@ -1,6 +1,6 @@
 const express = require('express');
-const { route } = require('express/lib/application');
 const router = express.Router();
+const login = require('../middleware/login')
 
 const ProfessorController = require('../controllers/professor.controllers')
 
